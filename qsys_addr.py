@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
 # static addresses of the FPGA
-h2f_axi_master_span = 0x40000000
-h2f_axi_master_ofst = 0xC0000000
-h2f_lwaxi_master_span = 0x200000
-h2f_lwaxi_master_ofst = 0xff200000
+axi_span = 0x40000000
+axi_ofst = 0xC0000000
+lwaxi_span = 0x200000
+lwaxi_ofst = 0xff200000
 
 # axi defined addresses
 h2f_switch_addr_ofst = 0x4000000

@@ -7,18 +7,18 @@
 import mmap
 import time
 from random import randrange
-import addresses
+import qsys_addr
 
-# static addresses of the FPGA
+# static qsys_addr of the FPGA
 h2f_axi_master_span = 0x40000000
 h2f_axi_master_ofst = 0xC0000000
 h2f_lwaxi_master_span = 0x200000
 h2f_lwaxi_master_ofst = 0xff200000
 
-# axi defined addresses
+# axi defined qsys_addr
 h2f_switch_addr_ofst = 0x4000000
 
-# lwaxi defined addresses
+# lwaxi defined qsys_addr
 h2f_led_addr = 0x000002c0
 
 # set random values to led
@@ -44,7 +44,7 @@ with open( "/dev/mem", "r+" ) as f:
     print( "data read from LED = 0x%x" % dataint )
     
 	# example of reading
-    mem.seek( addresses.lwaxi_bttn_addr )
+    mem.seek( qsys_addr.lwaxi_bttn_addr )
     data = mem.read( 4 )  # read the data in byte format
     dataint = int.from_bytes( data, byteorder = 'little' )
     time.sleep( 0.5 )

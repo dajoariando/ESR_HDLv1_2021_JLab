@@ -1,5 +1,9 @@
 #!/usr/bin/python
 
+import mmap
+import qsys_addr
+import qsys_spi
+
 # serial port registers
 h00 = 0x00      # read only register
 h00_UNLOCK  = 5 # out of lock condition
@@ -92,6 +96,28 @@ h0B_REV_msk     = 0x07
 h0B_PART        = 0     # part code. 0x04 for LTC6946-4
 h0B_PART_msk    = 0x1F
 
+RD              = 1
+WR              = 0
 
+def spi_rd(addr):
+    with open( "/dev/mem", "r+" ) as f:
+        # memory-map the file starting with the lightweight axi bus offset and the span of the h2f_lwaxi_master_span
+        mem = mmap.mmap( f.fileno(), qsys_addr.lwaxi_span, offset = qsys_addr.lwaxi_ofst )
+        
+        # reading the data from the SPI 
+        spival = (addr << 1 + RD) << 8
+        mem.seek( qsys_addr.lwaxi_plldds_spi_addr + qsys_spi.SPI_TXDATA_offst )
+        mem.write( spival.to_bytes( 4, 'little' ) )
+        mem.seek( qsys_addr.lwaxi_plldds_spi_addr + qsys_spi.SPI_RXDATA_offst )
+        data = mem.read( 4 )  # read the data in byte format
+        dataint = int.from_bytes( data, byteorder = 'little' )
+        
+        mem.close()  # close the map
+    return dataint
 
-
+def rd_chip():
+    dat     = spi_rd(h0B)
+    rev     = dat & (h0B_REV_msk << h0B_REV)
+    part    = dat & (h0B_PART_msk << h0B_PART)
+    return rev,part
+    
